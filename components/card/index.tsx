@@ -6,33 +6,53 @@ import styles from './card.module.css'
 function Card({
   sentence,
   type,
-  nextCard,
+  onNext,
+  onIncorrect,
 }: {
   sentence: any
   type: string
-  nextCard: MouseEventHandler<HTMLButtonElement>
+  onNext: MouseEventHandler<HTMLButtonElement>
+  onIncorrect: any
 }) {
-  // init
+  // prepare inputs
   const text = sentence.text.split(/({{.*?}})/)
-  const initialState: Record<number, string> = {}
-  text.forEach((s: string, i: number) => {
-    if (s[0] === '{') {
-      initialState[i] = ''
-    }
-  })
-  const [inputs, setInputs] = useState<Record<number, string>>({
-    ...initialState,
-  })
 
-  // needed to refresh the inputs state...
-  useEffect(() => {
+  // helper function to populate input state
+  const getInitialState = () => {
     const initialState: Record<number, string> = {}
     text.forEach((s: string, i: number) => {
       if (s[0] === '{') {
         initialState[i] = ''
       }
     })
-    setInputs({ ...initialState })
+    return initialState
+  }
+
+  const [inputs, setInputs] = useState(getInitialState())
+
+  // check inputs
+  const [hasGuessed, setHasGuessed] = useState(false)
+  const [isCorrect, setIsCorrect] = useState(true)
+  const handleCheck = () => {
+    for (let i = 0; i < text.length; i++) {
+      if (text[i][0] !== '{') continue
+      if (
+        inputs[i].toLowerCase() !==
+        text[i].replace(/{{(.*)}}/, '$1').toLowerCase()
+      ) {
+        setIsCorrect(false)
+        onIncorrect()
+        break
+      }
+    }
+    setHasGuessed(true)
+  }
+
+  // needed to refresh everything...
+  useEffect(() => {
+    setInputs(getInitialState())
+    setHasGuessed(false)
+    setIsCorrect(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sentence.text])
 
@@ -56,7 +76,13 @@ function Card({
         })}
       </p>
       <p className={styles.translation}>{sentence.translation}</p>
-      <button onClick={nextCard}>continue</button>
+      {!hasGuessed && <button onClick={handleCheck}>check</button>}
+      {hasGuessed && (
+        <>
+          <p>{isCorrect ? 'correct' : 'incorrect'}</p>
+          <button onClick={onNext}>continue</button>
+        </>
+      )}
     </div>
   )
 }
