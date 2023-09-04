@@ -2,9 +2,14 @@
 import styles from './articles.module.css'
 import { Card } from '@/components'
 import { useState, useRef } from 'react'
+import type { Sentence } from '@prisma/client'
 
 // i'm not really sure how to organize this stuff
-export default function ArticlesClient({ sentences }: { sentences: any }) {
+export default function ArticlesClient({
+  sentences,
+}: {
+  sentences: Sentence[]
+}) {
   const [index, setIndex] = useState(0)
   const [sentence, setSentence] = useState(sentences[0])
   const correct = useRef(sentences.length)
@@ -14,7 +19,8 @@ export default function ArticlesClient({ sentences }: { sentences: any }) {
     correct.current--
   }
 
-  const handleNext = () => {
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault()
     if (index < sentences.length) {
       setSentence(sentences[index + 1])
       setIndex((i) => i + 1)

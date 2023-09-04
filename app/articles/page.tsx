@@ -1,30 +1,13 @@
 import styles from './articles.module.css'
 import ArticlesClient from './articlesClient'
+import { PrismaClient } from '@prisma/client'
 
 async function getSentences() {
-  // dummy data
-  return [
-    {
-      text: '{{Das}} Mädchen ist {{ein}} Kind.',
-      translation: 'The girl is a child.',
-    },
-    {
-      text: '{{Der}} Hund ist braun.',
-      translation: 'The dog is brown.',
-    },
-    {
-      text: 'Warum ist {{die}} Frau hier?',
-      translation: 'Why is the woman here?',
-    },
-    {
-      text: 'Mach bitte {{das}} Fenster auf.',
-      translation: 'Open the window, please.',
-    },
-    {
-      text: '{{Die}} Kinder sind gerade beschäftig.',
-      translation: 'The children are busy right now.',
-    },
-  ]
+  const prisma = new PrismaClient()
+  const sentences = await prisma.sentence.findMany({
+    take: 5,
+  })
+  return sentences
 }
 
 export default async function Articles() {

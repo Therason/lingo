@@ -12,7 +12,7 @@ function Card({
   sentence: any
   type: string
   onNext: MouseEventHandler<HTMLButtonElement>
-  onIncorrect: any
+  onIncorrect: () => void
 }) {
   // prepare inputs
   const text = sentence.text.split(/({{.*?}})/)
@@ -33,7 +33,8 @@ function Card({
   // check inputs
   const [hasGuessed, setHasGuessed] = useState(false)
   const [isCorrect, setIsCorrect] = useState(true)
-  const handleCheck = () => {
+  const handleCheck = (e: React.MouseEvent) => {
+    e.preventDefault()
     for (let i = 0; i < text.length; i++) {
       if (text[i][0] !== '{') continue
       if (
@@ -57,7 +58,7 @@ function Card({
   }, [sentence.text])
 
   return (
-    <div className={styles.container}>
+    <form className={styles.container}>
       <h3>{type}</h3>
       <p>
         {text.map((word: string, i: number) => {
@@ -83,7 +84,7 @@ function Card({
           <button onClick={onNext}>continue</button>
         </>
       )}
-    </div>
+    </form>
   )
 }
 
