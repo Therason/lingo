@@ -1,14 +1,14 @@
 import styles from './articles.module.css'
 import ArticlesClient from './articlesClient'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@/lib/db'
 
 async function getSentences() {
-  const prisma = new PrismaClient()
   const sentences = await prisma.sentence.findMany({
     take: 5,
   })
   return sentences
 }
+//
 
 export default async function Articles() {
   const data = await getSentences()

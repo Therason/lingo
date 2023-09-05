@@ -3,4 +3,5 @@
   border-radius: 10px;
   width: fit-content;
   padding: 1em;
+  min-height: 40vh;
 }
